@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class JsonComparator
 {
-    private final static ObjectMapper mapper = new ObjectMapper();
+    private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final boolean stopOnFirst;
     private final DiffRecorder diffRecorder;
@@ -41,7 +41,6 @@ public final class JsonComparator
         return compareJsonStrings(sample1, sample2, stopOnFirst, List.of());
     }
 
-
     /**
      * Compares two JSON strings. Stops comparison on the first discrepancy.
      *
@@ -61,7 +60,7 @@ public final class JsonComparator
         if (root1 != null || !stopOnFirst)
         {
             JsonNode root2 = comparator.parseSample(sample2, "second");
-            if (root1 != null && root2 != null)
+            if (root2 != null)
             {
                 comparator.nodesEqual(root1, root2);
             }
@@ -76,12 +75,20 @@ public final class JsonComparator
     {
         try
         {
-            return mapper.readTree(sample);
+            JsonNode ret = OBJECT_MAPPER.readTree(sample);
+            if (ret.isEmpty())
+            {
+                log.error("Empty input for the {} sample", qualifier);
+                diffRecorder.addMessage("Empty input for the " + qualifier + " sample");
+                return null;
+
+            }
+            return ret;
         }
         catch (JsonProcessingException e)
         {
-            log.error("Failed to parse the {} sample", qualifier, e);
-            diffRecorder.addMessage("Failed to parse " + qualifier + " sample: " + e.getMessage());
+            log.error("Failed to parse the {} sample: {}", qualifier, e.getMessage());
+            diffRecorder.addMessage("Failed to parse the " + qualifier + " sample: " + e.getOriginalMessage());
             return null;
         }
     }
