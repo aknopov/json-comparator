@@ -3,7 +3,6 @@ package com.aknopov.jsoncompare;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,22 +21,42 @@ class JsonComparatorTest
 """
 {"a": {"b": "foo", "c": 5, "d": {"e": "bar"}}
 """;
+    private final static String DEGRADED_SAMPLE = "{}";
 
     @Test //UC
     void testParsing() throws Exception
     {
         ObjectMapper mapper = new ObjectMapper();
+//
+//        JsonNode root0 = mapper.readTree(JSON_SAMPLE);
+//        System.err.printf("%s%n", root0.getNodeType());//UC
+//        var it0 = root0.fields();
+//        while (it0.hasNext())
+//        {
+//            var val = it0.next();
+//            var name = val.getKey();
+//            var type = val.getValue().getNodeType();
+//            var plainText = val.getValue().textValue();
+//            System.err.printf("%s: %s%n", val, val.getValue().getNodeType());//UC
+//        }
 
         JsonNode root = mapper.readTree(JSON_SAMPLE);
 
-        assertFalse(root.isEmpty());
-        assertFalse(root.isValueNode());
-
-        Iterator<String> itNames = root.fieldNames();
-        while (itNames.hasNext()) {
-            String key = itNames.next();
-            System.err.printf("%s%n", key);//UC
-        }
+//        assertFalse(root.isEmpty());
+//        assertFalse(root.isValueNode());
+//
+//        Iterator<String> itNames = root.fieldNames();
+//        while (itNames.hasNext()) {
+//            String key = itNames.next();
+//            System.err.printf("%s%n", key);//UC
+//        }
+//
+//        var it2 = root.elements();
+//        while (it2.hasNext())
+//        {
+//            var val = it2.next();
+//            System.err.printf("%s%n", val);//UC
+//        }
 
         printTree(root, 0);
     }
@@ -53,7 +72,7 @@ class JsonComparatorTest
             JsonNode value = entry.getValue();
             if (value.isValueNode())
             {
-                System.err.printf("%s%s = %s%n", margin, key, value);
+                System.err.printf("%s%s: %s%n", margin, key, value);
             }
             else if (value.isArray())
             {
