@@ -1,7 +1,12 @@
 package com.aknopov.jsoncompare;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -95,6 +100,91 @@ public final class JsonComparator
 
     private void nodesEqual(JsonNode root1, JsonNode root2)
     {
-        // UC
+        TreeNode<?> treeRoot1 = TreeNodeFactory.fromJacksonRoot(root1);
+        TreeNode<?> treeRoot2 = TreeNodeFactory.fromJacksonRoot(root2);
+
+        if (Objects.equals(treeRoot1, treeRoot2))
+        {
+            return;
+        }
+
+        if (typesAreDifferent(treeRoot1, treeRoot2) && stopOnFirst)
+        {
+            return;
+        }
+        if (namesAreDifferent(treeRoot1, treeRoot2) && stopOnFirst)
+        {
+            return;
+        }
+        checkChildrenAreDifferent(treeRoot1, treeRoot2);
+    }
+
+    private boolean typesAreDifferent(TreeNode<?> treeNode1, TreeNode<?> treeNode2)
+    {
+        NodeType type1 = treeNode1.getNodeType();
+        NodeType type2 = treeNode2.getNodeType();
+        if (type1 != type2)
+        {
+            diffRecorder.addMessage("Node types are different: '%s' vs '%s'", type1, type2);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean namesAreDifferent(TreeNode<?> treeNode1, TreeNode<?> treeNode2)
+    {
+        String name1 = treeNode1.getName();
+        String name2 = treeNode2.getName();
+        if (!Objects.equals(name1, name2))
+        {
+            diffRecorder.addMessage("Node names are different: '%s' vs '%s'", name1, name2);
+            return true;
+        }
+        return false;
+    }
+
+    private void checkChildrenAreDifferent(TreeNode<?> treeNode1, TreeNode<?> treeNode2)
+    {
+        TreeNode<?>[] children1 = treeNode1.getChildren();
+        TreeNode<?>[] children2 = treeNode2.getChildren();
+        if (Arrays.equals(children1, children2))
+        {
+            return;
+        }
+        if (Arrays.equals(sortChildren(children1), sortChildren(children2)))
+        {
+            diffRecorder.addMessage("Children order differ for %d nodes, path='%s'", children1.length, path(treeNode1));
+            // TODO Implement comparison and output of sorted children
+            return;
+        }
+
+        //UC
+        diffRecorder.addMessage("Something is different for %d nodes, path='%s'", children1.length, path(treeNode1)); //UC
+    }
+
+    private TreeNode<?>[] sortChildren(TreeNode<?>[] children)
+    {
+        return Arrays.stream(children)
+                .sorted(Comparator.comparing(TreeNode::getName))
+                .toArray(TreeNode<?>[]::new);
+    }
+
+    private String path(TreeNode<?> treeNode)
+    {
+        LinkedList<String> path = new LinkedList<>();
+        while (treeNode != null)
+        {
+            TreeNode<?> parentNode = treeNode.getParent();
+            if (treeNode.numChildren() < 2)
+            {
+                path.push("/" + treeNode.getName());
+            }
+            else
+            {
+                path.push("/" + treeNode.getName() + "[" + treeNode.getIndex() + "]");
+            }
+            treeNode = parentNode;
+        }
+        return String.join("", path);
     }
 }

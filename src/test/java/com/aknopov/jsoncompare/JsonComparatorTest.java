@@ -22,6 +22,30 @@ class JsonComparatorTest
 {"a": {"b": "foo", "c": 5, "d": {"e": "bar"}}
 """;
     private final static String DEGRADED_SAMPLE = "{}";
+    private final static String ARRAY_1 = """
+[
+  {
+     "id": 1,
+     "name": "a"
+  },
+  {
+     "id": 2,
+     "name": "b"
+  }
+]
+""";
+    private final static String ARRAY_2 = """
+[
+  {
+     "id": 1,
+     "name": "a"
+  },
+  {
+     "id": 2,
+     "name": "c"
+  }
+]
+""";
 
     @Test //UC
     void testParsing() throws Exception
@@ -115,5 +139,21 @@ class JsonComparatorTest
 
         List<String> thirdErr = JsonComparator.compareJsonStrings(INVALID_JSON_SAMPLE, JSON_SAMPLE, true);
         assertTrue(!thirdErr.isEmpty() && thirdErr.get(0).startsWith("Failed to parse the first sample:"));
+    }
+
+    @Test
+    void testIdentityEquivalence()
+    {
+        List<String> diffs = JsonComparator.compareJsonStrings(JSON_SAMPLE, JSON_SAMPLE, false);
+
+        assertTrue(diffs.isEmpty());
+    }
+
+    @Test
+    void testCompareArrays()
+    {
+        List<String> diffs = JsonComparator.compareJsonStrings(ARRAY_1, ARRAY_2, false);
+
+        assertFalse(diffs.isEmpty()); //UC
     }
 }

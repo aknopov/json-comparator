@@ -31,6 +31,17 @@ class DiffRecorder
     }
 
     /**
+     * Adds a message in according to {@link String#format} specifications.
+     *
+     * @param format format string
+     * @param args additional arguments
+     */
+    void addMessage(String format, Object ... args)
+    {
+        addMessage(String.format(format, args));
+    }
+
+    /**
      * Checks if message list is empty
      * @return check result
      */

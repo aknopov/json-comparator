@@ -1,17 +1,20 @@
 package com.aknopov.jsoncompare;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.zip.CRC32C;
 
 import javax.annotation.Nullable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
  * TreeNode presentation
  */
-@Getter
+@Getter(AccessLevel.PACKAGE)
  class TreeNode<T>
 {
     private final String name;
@@ -21,8 +24,10 @@ import lombok.Getter;
     @Nullable
     private final TreeNode<?> parent;
     private final int index;
+    @Getter(AccessLevel.NONE)
     private final List<TreeNode<?>> children;
-    private int crc32;
+    @Getter(AccessLevel.NONE)
+    private final CRC32C crc32 = new CRC32C();
 
     TreeNode(String name, NodeType nodeType)
     {
@@ -52,6 +57,11 @@ import lombok.Getter;
         return this;
     }
 
+    int numChildren()
+    {
+        return children.size();
+    }
+
     TreeNode<?>[] getChildren()
     {
         return children.toArray(new TreeNode[0]);
@@ -64,12 +74,22 @@ import lombok.Getter;
 
     private void initCrc32()
     {
-        this.crc32 = Objects.hash(name, nodeType, parent, value, index, children); //UC
+        crc32.update(ByteBuffer.wrap(name.getBytes(Charset.defaultCharset())));
+        crc32.update((nodeType.ordinal()));
+        if (parent != null)
+        {
+            crc32.update((parent.hashCode()));
+        }
+        if (value != null)
+        {
+            crc32.update(value.hashCode());
+        }
+        crc32.update(index);
     }
 
     private void updateCrc(TreeNode<?> child)
     {
-        this.crc32 += 31 * this.crc32 + child.getCrc32(); //UC
+        crc32.update(child.hashCode());
     }
 
     @Override
@@ -90,7 +110,7 @@ import lombok.Getter;
         sb.append(", children=")
                 .append(children.size());
         sb.append(", crc32=0x")
-                .append(Integer.toHexString(crc32));
+                .append(Integer.toHexString(hashCode()));
         sb.append('}');
         return sb.toString();
     }
@@ -106,12 +126,12 @@ import lombok.Getter;
         {
             return false;
         }
-        return crc32 == otherNode.crc32;
+        return crc32.getValue() == otherNode.crc32.getValue();
     }
 
     @Override
     public int hashCode()
     {
-        return crc32;
+        return (int)crc32.getValue();
     }
 }
