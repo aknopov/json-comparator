@@ -1,7 +1,5 @@
 package com.aknopov.jsoncompare;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 
@@ -10,9 +8,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
  */
 final class TreeNodeFactory
 {
-    private static final Set<JsonNodeType> VALUE_TYPES =
-            Set.of(JsonNodeType.BINARY, JsonNodeType.BOOLEAN, JsonNodeType.NUMBER, JsonNodeType.STRING);
-
     private TreeNodeFactory()
     {
     }
@@ -25,52 +20,46 @@ final class TreeNodeFactory
      */
     static TreeNode<?> fromJacksonRoot(JsonNode jsonNode)
     {
-        TreeNode<?> treeRoot = new TreeNode<>("", NodeType.OBJECT, null, null);
-        TreeNodeFactory.fromJackson(jsonNode, treeRoot, -1);
-        return treeRoot;
+        return fromJackson("", jsonNode, null, 0);
     }
 
     /**
      * Converts {@code JsonNode} to {@code TreeNode} tree node using depth-first traversing
      *
+     * @param name tree node name
      * @param jsonNode Jackson object
-     * @param parent node parent
+     * @param parent tree node parent
      * @param index index in the parent child list
      */
-    static void fromJackson(JsonNode jsonNode, TreeNode<?> parent, int index)
+    static TreeNode<?> fromJackson(String name, JsonNode jsonNode, TreeNode<?> parent, int index)
     {
-        if (VALUE_TYPES.contains(jsonNode.getNodeType()))
+        JsonNodeType jsonType = jsonNode.getNodeType();
+        TreeNode<?> treeNode = switch (jsonType)
         {
-            parent.addChild(valueToTreeNode("", jsonNode, parent, index));
-            return;
-        }
-        else if (jsonNode.getNodeType() == JsonNodeType.ARRAY)
-        {
-            parent.addChild(arrayToTreeNode("", jsonNode, parent));
-            return;
-        }
+            case OBJECT -> new TreeNode<>(name, NodeType.OBJECT, parent, null, index);
+            case ARRAY -> new TreeNode<>(name, NodeType.ARRAY, parent, null, index);
+            default -> valueToTreeNode(name, jsonNode, parent, index);
+        };
 
-        for (String fieldName : fieldNames(jsonNode))
+        if (jsonType == JsonNodeType.OBJECT)
         {
-            JsonNode jsonChild = jsonNode.get(fieldName);
-            switch (jsonChild.getNodeType())
+            int idx = 0;
+            for (String childName : fieldNames(jsonNode))
             {
-                case OBJECT ->
-                {
-                    TreeNode<Void> treeChild = new TreeNode<>(fieldName, NodeType.OBJECT, parent, null, -1);
-                    parent.addChild(treeChild);
-                    fromJackson(jsonChild, treeChild, -1);
-                }
-                case ARRAY ->
-                {
-                    parent.addChild(arrayToTreeNode(fieldName, jsonChild, parent));
-                }
-                case BINARY, BOOLEAN, NUMBER, STRING ->
-                {
-                    parent.addChild(valueToTreeNode(fieldName, jsonChild, parent, -1));
-                }
+                JsonNode jsonChild = jsonNode.get(childName);
+                treeNode.addChild(fromJackson(childName, jsonChild, treeNode, idx++));
             }
         }
+        else if (jsonType == JsonNodeType.ARRAY)
+        {
+            int idx = 0;
+            for (JsonNode jsonChild : jsonNode)
+            {
+                treeNode.addChild(fromJackson("", jsonChild, treeNode, idx++));
+            }
+        }
+
+        return treeNode;
     }
 
     private static TreeNode<?> valueToTreeNode(String fieldName, JsonNode jsonNode, TreeNode<?> parent, int index)
@@ -83,19 +72,6 @@ final class TreeNodeFactory
             default -> throw new IllegalArgumentException(
                     "Can't convert node of type '" + jsonNode.getNodeType() + "' to value");
         };
-    }
-
-    private static TreeNode<?> arrayToTreeNode(String fieldName, JsonNode jsonNode, TreeNode<?> parent)
-    {
-        TreeNode<Void> treeNode = new TreeNode<>(fieldName, NodeType.ARRAY, parent, null, -1);
-        int i = 0;
-        for (JsonNode arrayItem : jsonNode)
-        {
-            fromJackson(arrayItem, treeNode, i);
-            i++;
-        }
-
-        return treeNode;
     }
 
     private static Iterable<String> fieldNames(JsonNode jsonNode)
