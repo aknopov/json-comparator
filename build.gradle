@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'checkstyle'
     id('net.ltgt.errorprone') version '4.1.0'
     id('net.ltgt.nullaway') version '2.2.0'
 }
