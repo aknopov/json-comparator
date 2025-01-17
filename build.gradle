@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id('net.ltgt.errorprone') version '4.1.0'
+    id('net.ltgt.nullaway') version '2.2.0'
 }
 
 group = 'com.aknopov.jsoncompare'
@@ -15,6 +16,7 @@ compileTestJava.options.encoding = 'UTF-8'
 
 dependencies {
     errorprone("com.google.errorprone:error_prone_core:$errorproneVersion")
+    errorprone("com.uber.nullaway:nullaway:$nullawayVersion")
 
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     compileOnly "org.projectlombok:lombok:$lombokVersion"
@@ -37,6 +39,11 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+nullaway {
+    annotatedPackages.add("com.aknopov")
+}
+
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.disableWarningsInGeneratedCode.set(true)

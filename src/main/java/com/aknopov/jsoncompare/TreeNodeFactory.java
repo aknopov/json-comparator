@@ -1,5 +1,7 @@
 package com.aknopov.jsoncompare;
 
+import javax.annotation.Nullable;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 
@@ -31,7 +33,7 @@ final class TreeNodeFactory
      * @param parent tree node parent
      * @param index index in the parent child list
      */
-    static TreeNode<?> fromJackson(String name, JsonNode jsonNode, TreeNode<?> parent, int index)
+    static TreeNode<?> fromJackson(String name, JsonNode jsonNode, @Nullable TreeNode<?> parent, int index)
     {
         JsonNodeType jsonType = jsonNode.getNodeType();
         TreeNode<?> treeNode = switch (jsonType)
@@ -62,7 +64,7 @@ final class TreeNodeFactory
         return treeNode;
     }
 
-    private static TreeNode<?> valueToTreeNode(String fieldName, JsonNode jsonNode, TreeNode<?> parent, int index)
+    private static TreeNode<?> valueToTreeNode(String fieldName, JsonNode jsonNode, @Nullable TreeNode<?> parent, int index)
     {
         return switch (jsonNode.getNodeType())
         {

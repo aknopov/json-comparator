@@ -34,7 +34,7 @@ import lombok.Getter;
         this(name, nodeType, null, null);
     }
 
-    TreeNode(String name, NodeType nodeType, @Nullable TreeNode<?> parent, T value)
+    TreeNode(String name, NodeType nodeType, @Nullable TreeNode<?> parent, @Nullable T value)
     {
         this(name, nodeType, parent, value, -1);
     }

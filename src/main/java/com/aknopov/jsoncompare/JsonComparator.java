@@ -4,10 +4,8 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -66,7 +64,7 @@ public final class JsonComparator
         if (root1 != null || !stopOnFirst)
         {
             JsonNode root2 = comparator.parseSample(sample2, "second");
-            if (root2 != null)
+            if (root1 != null && root2 != null)
             {
                 comparator.nodesEqual(root1, root2);
             }

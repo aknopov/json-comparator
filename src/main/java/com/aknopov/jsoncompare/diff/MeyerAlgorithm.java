@@ -30,8 +30,6 @@ public class MeyerAlgorithm<T>
     private final boolean recordEquals;
     private final List<Diff<T>> diffs;
     private final boolean reverse;
-    private int[] paths;
-    private List<Graph> graphs;
 
     /**
      * Compares two sequences of any type and returns a list of differences.
@@ -175,11 +173,11 @@ public class MeyerAlgorithm<T>
     private List<Coord> compose()
     {
         int[] fp = new int[a.size() + b.size() + 3];
-        this.paths = new int[a.size() + b.size() + 3];
-        this.graphs = new ArrayList<>();
+        int [] paths = new int[a.size() + b.size() + 3];
+        List<Graph> graphs = new ArrayList<>();
 
         Arrays.fill(fp, -1);
-        Arrays.fill(this.paths, -1);
+        Arrays.fill(paths, -1);
 
         int offset = this.a.size() + 1;
         int delta = this.b.size() - this.a.size();
@@ -187,26 +185,26 @@ public class MeyerAlgorithm<T>
         {
             for (int k = -p; k <= delta - 1; k++)
             {
-                fp[k + offset] = snake(k, fp[k - 1 + offset] + 1, fp[k + 1 + offset], offset);
+                fp[k + offset] = snake(k, fp[k - 1 + offset] + 1, fp[k + 1 + offset], offset, paths, graphs);
             }
             for (int k = delta + p; k >= delta + 1; k--)
             {
-                fp[k + offset] = snake(k, fp[k - 1 + offset] + 1, fp[k + 1 + offset], offset);
+                fp[k + offset] = snake(k, fp[k - 1 + offset] + 1, fp[k + 1 + offset], offset, paths, graphs);
             }
 
-            fp[delta + offset] = snake(delta, fp[delta - 1 + offset] + 1, fp[delta + 1 + offset], offset);
+            fp[delta + offset] = snake(delta, fp[delta - 1 + offset] + 1, fp[delta + 1 + offset], offset, paths, graphs);
 
-            if (fp[delta + offset] >= this.a.size() || this.graphs.size() > this.maxDiffs)
+            if (fp[delta + offset] >= this.a.size() || graphs.size() > this.maxDiffs)
             {
                 break;
             }
         }
 
-        int r = this.paths[delta + offset];
+        int r = paths[delta + offset];
         var comparePoint = new ArrayList<Coord>();
         while (r != -1)
         {
-            Graph graph = this.graphs.get(r);
+            Graph graph = graphs.get(r);
             comparePoint.add(new Coord(graph.x, graph.y));
             r = graph.r;
         }
@@ -214,16 +212,16 @@ public class MeyerAlgorithm<T>
         return comparePoint;
     }
 
-    private int snake(int k, int p, int pp, int offset)
+    private int snake(int k, int p, int pp, int offset, int[] paths, List<Graph> graphs)
     {
         int r;
         if (p > pp)
         {
-            r = this.paths[k - 1 + offset];
+            r = paths[k - 1 + offset];
         }
         else
         {
-            r = this.paths[k + 1 + offset];
+            r = paths[k + 1 + offset];
         }
 
         int y = Math.max(p, pp);
@@ -235,8 +233,8 @@ public class MeyerAlgorithm<T>
             y++;
         }
 
-        this.paths[k + offset] = this.graphs.size();
-        this.graphs.add(new Graph(x, y, r));
+        paths[k + offset] = graphs.size();
+        graphs.add(new Graph(x, y, r));
 
         return y;
     }
