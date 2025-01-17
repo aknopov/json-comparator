@@ -1,5 +1,6 @@
 package com.aknopov.jsoncompare;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -171,7 +172,7 @@ public final class JsonComparator
 
     private String path(TreeNode<?> treeNode)
     {
-        LinkedList<String> path = new LinkedList<>();
+        ArrayDeque<String> path = new ArrayDeque<>();
         while (treeNode != null)
         {
             TreeNode<?> parentNode = treeNode.getParent();

@@ -72,13 +72,14 @@ import lombok.Getter;
         return children.get(index);
     }
 
+    @SuppressWarnings("EnumOrdinal")
     private void initCrc32()
     {
         crc32.update(ByteBuffer.wrap(name.getBytes(Charset.defaultCharset())));
-        crc32.update((nodeType.ordinal()));
+        crc32.update(nodeType.ordinal());
         if (parent != null)
         {
-            crc32.update((parent.hashCode()));
+            crc32.update(parent.hashCode());
         }
         if (value != null)
         {

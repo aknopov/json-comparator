@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.google.errorprone.annotations.FormatMethod;
+
 /**
  * Collects discrepancy messages while walking the trees.
  */
@@ -36,6 +38,7 @@ class DiffRecorder
      * @param format format string
      * @param args additional arguments
      */
+    @FormatMethod
     void addMessage(String format, Object ... args)
     {
         addMessage(String.format(format, args));

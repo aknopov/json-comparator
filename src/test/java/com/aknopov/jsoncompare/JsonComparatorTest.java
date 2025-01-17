@@ -18,6 +18,7 @@ class JsonComparatorTest
 """
 {"a": {"b": "foo", "c": 5, "d": {"e": "bar"}}
 """;
+    @SuppressWarnings("UnusedVariable") //UC
     private final static String EMPTY_SAMPLE = "{}";
     private final static String ARRAY_1 = """
 [
