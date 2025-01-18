@@ -2,6 +2,7 @@ package com.aknopov.jsoncompare;
 
 import org.junit.jupiter.api.Test;
 
+import com.aknopov.jsoncompare.TreeNode.NodeType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

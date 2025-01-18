@@ -17,6 +17,18 @@ import lombok.Getter;
 @Getter(AccessLevel.PACKAGE)
  class TreeNode<T>
 {
+    /**
+     * Node Types
+     */
+    enum NodeType
+    {
+        TEXT,
+        NUMBER,
+        BOOLEAN,
+        ARRAY,
+        OBJECT
+    }
+
     private final String name;
     private final NodeType nodeType;
     @Nullable
