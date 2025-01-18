@@ -24,14 +24,12 @@ public class MeyerAlgorithm<T>
     {
     }
 
-    private List<T> a;
-    private List<T> b;
+    private final List<T> a;
+    private final List<T> b;
     private final int maxDiffs;
     private final boolean recordEquals;
-    private int ox;
-    private int oy;
     private final List<Diff<T>> diffs;
-    private boolean reverse;
+    private final boolean reverse;
     private int[] paths;
     private List<Graph> graphs;
 
@@ -54,7 +52,7 @@ public class MeyerAlgorithm<T>
      *
      * @param a the first sequence to compare
      * @param b the second sequence to compare
-     * @param maxDiffs maximum number of differences to analyse, greater than 0
+     * @param maxDiffs maximum number of edit graphs to analyse
      * @param <T> the type of the elements in the sequences
      *
      * @return a list of differences between the two sequences.
@@ -66,13 +64,11 @@ public class MeyerAlgorithm<T>
         MeyerAlgorithm<T> algorithm;
         if (a.size() < b.size())
         {
-            algorithm = new MeyerAlgorithm<>(a, b, maxDiffs, false);
-            algorithm.reverse = false;
+            algorithm = new MeyerAlgorithm<>(a, b, maxDiffs, false, false);
         }
         else
         {
-            algorithm = new MeyerAlgorithm<>(b, a, maxDiffs, false);
-            algorithm.reverse = true;
+            algorithm = new MeyerAlgorithm<>(b, a, maxDiffs, true, false);
         }
 
         algorithm.doCompare();
@@ -103,25 +99,22 @@ public class MeyerAlgorithm<T>
         return sb.toString();
     }
 
-    private MeyerAlgorithm(List<T> a, List<T> b, int maxDiffs, boolean recordEquals)
+    private MeyerAlgorithm(List<T> a, List<T> b, int maxDiffs, boolean reverse, boolean recordEquals)
     {
         this.a = a;
         this.b = b;
         this.maxDiffs = maxDiffs;
+        this.reverse = reverse;
         this.recordEquals = recordEquals;
         this.diffs = new ArrayList<>();
     }
 
     private void doCompare()
     {
-        boolean done = false;
-        while (!done)
-        {
-            done = recordDiffs(compose());
-        }
+        recordDiffs(compose());
     }
 
-    private boolean recordDiffs(List<Coord> comparePoints)
+    private void recordDiffs(List<Coord> comparePoints)
     {
         int x = 1;
         int y = 1;
@@ -135,11 +128,11 @@ public class MeyerAlgorithm<T>
                 {
                     if (this.reverse)
                     {
-                        diffs.add(new Diff<>(this.b.get(py), DiffType.DELETE, y + this.oy - 1, -1));
+                        diffs.add(new Diff<>(this.b.get(py), DiffType.DELETE, y - 1, -1));
                     }
                     else
                     {
-                        diffs.add(new Diff<>(this.b.get(py), DiffType.ADD, -1, y + this.oy - 1));
+                        diffs.add(new Diff<>(this.b.get(py), DiffType.ADD, -1, y - 1));
                     }
                     y++;
                     py++;
@@ -148,11 +141,11 @@ public class MeyerAlgorithm<T>
                 {
                     if (this.reverse)
                     {
-                        diffs.add(new Diff<>(this.a.get(px), DiffType.ADD, -1, x + this.ox - 1));
+                        diffs.add(new Diff<>(this.a.get(px), DiffType.ADD, -1, x - 1));
                     }
                     else
                     {
-                        diffs.add(new Diff<>(this.a.get(px), DiffType.DELETE, x + this.ox - 1, -1));
+                        diffs.add(new Diff<>(this.a.get(px), DiffType.DELETE, x - 1, -1));
                     }
                     x++;
                     px++;
@@ -163,11 +156,11 @@ public class MeyerAlgorithm<T>
                     {
                         if (this.reverse)
                         {
-                            diffs.add(new Diff<>(this.b.get(py), DiffType.SAME, y + this.oy - 1, x + this.ox - 1));
+                            diffs.add(new Diff<>(this.b.get(py), DiffType.SAME, y - 1, x - 1));
                         }
                         else
                         {
-                            diffs.add(new Diff<>(this.a.get(px), DiffType.SAME, x + this.ox - 1, y + this.oy - 1));
+                            diffs.add(new Diff<>(this.a.get(px), DiffType.SAME, x - 1, y - 1));
                         }
                     }
                     x++;
@@ -177,18 +170,6 @@ public class MeyerAlgorithm<T>
                 }
             }
         }
-
-        if (x <= this.a.size() && y <= this.b.size())
-        {
-            this.a = this.a.subList(x - 1, this.a.size());
-            this.b = this.b.subList(y - 1, b.size());
-            this.ox = x - 1;
-            this.oy = y - 1;
-            return false;
-        }
-
-        // all recording succeeded
-        return true;
     }
 
     private List<Coord> compose()

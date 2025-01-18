@@ -44,6 +44,13 @@ class MeyerAlgorithmTest
                     Diff.of('b', ADD, -1, 7),
                     Diff.of('a', ADD, -1, 8),
                     Diff.of('b', ADD, -1, 9))),
+            Arguments.of("acebdabbabed", "acbdeacbed", List.of(
+                    Diff.of('e', DELETE, 2, -1),
+                    Diff.of('e', ADD, -1, 4),
+                    Diff.of('c', ADD, -1, 6),
+                    Diff.of('b', DELETE, 7, -1),
+                    Diff.of('a', DELETE, 8, -1),
+                    Diff.of('b', DELETE, 9, -1))),
             Arguments.of("abcbda", "bdcaba", List.of(
                     Diff.of('a', DELETE, 0, -1),
                     Diff.of('d', ADD, -1, 1),
@@ -60,7 +67,8 @@ class MeyerAlgorithmTest
             Arguments.of("", "b", List.of(Diff.of('b', ADD, -1, 0))),
             Arguments.of("Привет!", "Прювет!", List.of(
                     Diff.of('и', DELETE, 2, -1),
-                    Diff.of('ю', ADD, -1, 2)))
+                    Diff.of('ю', ADD, -1, 2))),
+            Arguments.of("ab", "ba", List.of(Diff.of('a', DELETE, 0, -1), Diff.of('a', ADD, -1, 1)))
         );
     }
 
@@ -103,10 +111,13 @@ class MeyerAlgorithmTest
     @Test
     void testMaxDiffs()
     {
-        List<Character> a = List.of('a', 'b', 'c');
-        List<Character> b = List.of('a', 'b', 'd');
+        List<Character> a = List.of('a', 'b', 'c', 'd');
+        List<Character> b = List.of('d', 'c', 'b', 'a');
 
-        List<Diff<Character>> actualDiffs = MeyerAlgorithm.compareSequences(a, b, 1);
-        assertEquals(List.of(Diff.of('c', DELETE, 2, -1), Diff.of('d', ADD, -1, 2)), actualDiffs);
+        List<Diff<Character>> diffs1 = MeyerAlgorithm.compareSequences(a, b);
+        assertEquals(6, diffs1.size());
+
+        List<Diff<Character>> diffs2 = MeyerAlgorithm.compareSequences(a, b, 1);
+        assertEquals(2, diffs2.size());
     }
 }
