@@ -128,6 +128,8 @@ import lombok.Getter;
         return sb.toString();
     }
 
+    // Comparing just by CRC32.
+    // Comparing by all fields is slow and can cause infinite loop (parent)
     @Override
     public boolean equals(Object o)
     {

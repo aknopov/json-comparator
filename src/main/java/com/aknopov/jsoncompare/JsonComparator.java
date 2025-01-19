@@ -100,8 +100,8 @@ public final class JsonComparator
 
     private void nodesEqual(JsonNode root1, JsonNode root2)
     {
-        TreeNode<?> treeRoot1 = TreeNodeFactory.fromJacksonRoot(root1);
-        TreeNode<?> treeRoot2 = TreeNodeFactory.fromJacksonRoot(root2);
+        TreeNode<?> treeRoot1 = TreeNodeConverter.fromJacksonRoot(root1);
+        TreeNode<?> treeRoot2 = TreeNodeConverter.fromJacksonRoot(root2);
 
         if (Objects.equals(treeRoot1, treeRoot2))
         {

@@ -13,6 +13,7 @@ record Diff<T>(T e, DiffType t, int aIdx, int bIdx)
 {
     /**
      * Convenience factory method for creating class instance
+     *
      * @param e related element
      * @param t editing type
      * @param aIdx index in `A` sequence

@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 /**
  * Utility class for converting JsonNode's to TreeNode's.
  */
-final class TreeNodeFactory
+final class TreeNodeConverter
 {
-    private TreeNodeFactory()
+    private TreeNodeConverter()
     {
     }
 

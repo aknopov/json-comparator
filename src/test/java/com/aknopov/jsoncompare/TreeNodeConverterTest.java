@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class TreeNodeFactoryTest
+class TreeNodeConverterTest
 {
     private final static String EMPTY_SAMPLE = "{}";
     private final static String JSON_SAMPLE =
@@ -27,7 +27,7 @@ class TreeNodeFactoryTest
     {
         JsonNode root = MAPPER.readTree(EMPTY_SAMPLE);
 
-        TreeNode<?> treeRoot = TreeNodeFactory.fromJacksonRoot(root);
+        TreeNode<?> treeRoot = TreeNodeConverter.fromJacksonRoot(root);
 
         assertEquals(NodeType.OBJECT, treeRoot.getNodeType());
         assertEquals("", treeRoot.getName());
@@ -41,7 +41,7 @@ class TreeNodeFactoryTest
     {
         JsonNode root = MAPPER.readTree(JSON_SAMPLE);
 
-        TreeNode<?> treeRoot = TreeNodeFactory.fromJacksonRoot(root);
+        TreeNode<?> treeRoot = TreeNodeConverter.fromJacksonRoot(root);
 
         assertEquals(3, treeRoot.numChildren());
 
@@ -87,7 +87,7 @@ class TreeNodeFactoryTest
     {
         JsonNode root = MAPPER.readTree(ARRAY_SAMPLE);
 
-        TreeNode<?> treeRoot = TreeNodeFactory.fromJacksonRoot(root);
+        TreeNode<?> treeRoot = TreeNodeConverter.fromJacksonRoot(root);
 
         assertEquals(NodeType.ARRAY, treeRoot.getNodeType());
         assertEquals("", treeRoot.getName());
@@ -134,7 +134,7 @@ class TreeNodeFactoryTest
     {
         JsonNode root = MAPPER.readTree(ARRAY_2D);
 
-        TreeNode<?> treeRoot = TreeNodeFactory.fromJacksonRoot(root);
+        TreeNode<?> treeRoot = TreeNodeConverter.fromJacksonRoot(root);
 
         assertEquals(NodeType.ARRAY, treeRoot.getNodeType());
         assertEquals("", treeRoot.getName());
