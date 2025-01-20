@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import com.google.errorprone.annotations.FormatMethod;
 
 /**
@@ -39,7 +41,7 @@ class DiffRecorder
      * @param args additional arguments
      */
     @FormatMethod
-    void addMessage(String format, Object ... args)
+    void addMessage(String format, @Nullable Object ... args)
     {
         addMessage(String.format(format, args));
     }

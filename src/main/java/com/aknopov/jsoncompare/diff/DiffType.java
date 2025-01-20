@@ -3,7 +3,7 @@ package com.aknopov.jsoncompare.diff;
 /**
  * Modification type
  */
-enum DiffType
+public enum DiffType
 {
     DELETE,
     SAME,

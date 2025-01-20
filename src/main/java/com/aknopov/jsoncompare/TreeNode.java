@@ -2,6 +2,7 @@ package com.aknopov.jsoncompare;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.CRC32C;
@@ -15,8 +16,11 @@ import lombok.Getter;
  * TreeNode presentation
  */
 @Getter(AccessLevel.PACKAGE)
- class TreeNode<T>
+class TreeNode<T>
 {
+
+    private static final String DELIMITER = "/";
+
     /**
      * Node Types
      */
@@ -35,11 +39,12 @@ import lombok.Getter;
     private final T value;
     @Nullable
     private final TreeNode<?> parent;
+    private final List<TreeNode<?>> children;
     private final int index;
     @Getter(AccessLevel.NONE)
-    private final List<TreeNode<?>> children;
-    @Getter(AccessLevel.NONE)
     private final CRC32C crc32 = new CRC32C();
+    @Getter(AccessLevel.NONE)
+    private final ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES);
 
     TreeNode(String name, NodeType nodeType)
     {
@@ -74,35 +79,56 @@ import lombok.Getter;
         return children.size();
     }
 
-    TreeNode<?>[] getChildren()
-    {
-        return children.toArray(new TreeNode[0]);
-    }
-
     TreeNode<?> getChild(int index)
     {
         return children.get(index);
     }
 
-    @SuppressWarnings("EnumOrdinal")
+    String path()
+    {
+        ArrayDeque<String> path = new ArrayDeque<>();
+        TreeNode<?> treeNode = this;
+        while (treeNode.getParent() != null)
+        {
+            TreeNode<?> parentNode = treeNode.getParent();
+            if (parentNode.numChildren() < 2)
+            {
+                path.push(treeNode.getName());
+            }
+            else
+            {
+                path.push(treeNode.getName() + "[" + treeNode.getIndex() + "]");
+            }
+            treeNode = parentNode;
+        }
+        return DELIMITER + String.join(DELIMITER, path);
+    }
+
+
+    // Ignoring parent CRC to avoid interference.
+    // Hashing index only for arrays elements since in objects it affects detection of order change
     private void initCrc32()
     {
         crc32.update(ByteBuffer.wrap(name.getBytes(Charset.defaultCharset())));
-        crc32.update(nodeType.ordinal());
-        if (parent != null)
-        {
-            crc32.update(parent.hashCode());
-        }
+        crc32.update(nodeType.hashCode());
         if (value != null)
         {
-            crc32.update(value.hashCode());
+            updateCrcWithHash(value.hashCode());
         }
-        crc32.update(index);
+        if (parent != null && parent.nodeType == NodeType.ARRAY)
+        {
+            crc32.update(index);
+        }
     }
 
     private void updateCrc(TreeNode<?> child)
     {
-        crc32.update(child.hashCode());
+        updateCrcWithHash(child.hashCode());
+    }
+
+    private void updateCrcWithHash(int hashCode)
+    {
+        crc32.update(byteBuffer.clear().putInt(hashCode).array());
     }
 
     @Override

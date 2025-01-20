@@ -40,7 +40,7 @@ public class MeyerAlgorithm<T>
      *
      * @return a list of differences between the two sequences.
      */
-    static <T> List<Diff<T>> compareSequences(List<T> a, List<T> b)
+    public static <T> List<Diff<T>> compareSequences(List<T> a, List<T> b)
     {
         return compareSequences(a, b, DEFAULT_MAX_DIFFS);
     }
@@ -55,7 +55,7 @@ public class MeyerAlgorithm<T>
      *
      * @return a list of differences between the two sequences.
      */
-    static <T> List<Diff<T>> compareSequences(List<T> a, List<T> b, int maxDiffs)
+    public static <T> List<Diff<T>> compareSequences(List<T> a, List<T> b, int maxDiffs)
     {
         assert maxDiffs > 0;
 
@@ -126,11 +126,11 @@ public class MeyerAlgorithm<T>
                 {
                     if (this.reverse)
                     {
-                        diffs.add(new Diff<>(this.b.get(py), DiffType.DELETE, y - 1, -1));
+                        diffs.add(new Diff<>(this.b.get(py), DiffType.DELETE, y - 1, y - 1));
                     }
                     else
                     {
-                        diffs.add(new Diff<>(this.b.get(py), DiffType.ADD, -1, y - 1));
+                        diffs.add(new Diff<>(this.b.get(py), DiffType.ADD, y - 1, y - 1));
                     }
                     y++;
                     py++;
@@ -139,11 +139,11 @@ public class MeyerAlgorithm<T>
                 {
                     if (this.reverse)
                     {
-                        diffs.add(new Diff<>(this.a.get(px), DiffType.ADD, -1, x - 1));
+                        diffs.add(new Diff<>(this.a.get(px), DiffType.ADD, x - 1, x - 1));
                     }
                     else
                     {
-                        diffs.add(new Diff<>(this.a.get(px), DiffType.DELETE, x - 1, -1));
+                        diffs.add(new Diff<>(this.a.get(px), DiffType.DELETE, x - 1, x - 1));
                     }
                     x++;
                     px++;

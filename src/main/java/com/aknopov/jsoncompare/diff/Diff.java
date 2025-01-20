@@ -7,9 +7,9 @@ package com.aknopov.jsoncompare.diff;
  * @param t editing type
  * @param aIdx index in `A` sequence
  * @param bIdx index in `B` sequence
- * @param <T> type of comparable elements
+ * @param <T> type of elements
  */
-record Diff<T>(T e, DiffType t, int aIdx, int bIdx)
+public record Diff<T>(T e, DiffType t, int aIdx, int bIdx)
 {
     /**
      * Convenience factory method for creating class instance
@@ -19,7 +19,7 @@ record Diff<T>(T e, DiffType t, int aIdx, int bIdx)
      * @param aIdx index in `A` sequence
      * @param bIdx index in `B` sequence
      * @return created instance
-     * @param <T> type of comparable elements
+     * @param <T> type of elements
      */
     static <T> Diff<T> of(T e, DiffType t, int aIdx, int bIdx)
     {

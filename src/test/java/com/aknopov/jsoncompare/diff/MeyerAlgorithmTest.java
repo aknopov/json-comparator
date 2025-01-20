@@ -23,52 +23,52 @@ class MeyerAlgorithmTest
         List<Diff<Character>> diffs = MeyerAlgorithm.compareSequences(a, b);
         String sDiff = MeyerAlgorithm.serializeDiffs(diffs);
 
-        assertEquals("-c[2<->-1]\n+d[-1<->2]\n", sDiff);
+        assertEquals("-c[2<->2]\n+d[2<->2]\n", sDiff);
     }
 
     private static Stream<Arguments> stringDiffsSupplier()
     {
         return Stream.of(
-            Arguments.of("abc", "abd", List.of(Diff.of('c', DELETE, 2, -1), Diff.of('d', ADD, -1, 2))),
+            Arguments.of("abc", "abd", List.of(Diff.of('c', DELETE, 2, 2), Diff.of('d', ADD, 2, 2))),
             Arguments.of("abcdef", "dacfea", List.of(
-                    Diff.of('d', ADD, -1, 0),
-                    Diff.of('b', DELETE, 1, -1),
-                    Diff.of('d', DELETE, 3, -1),
-                    Diff.of('e', DELETE, 4, -1),
-                    Diff.of('e', ADD, -1, 4),
-                    Diff.of('a', ADD, -1, 5))),
+                    Diff.of('d', ADD, 0, 0),
+                    Diff.of('b', DELETE, 1, 1),
+                    Diff.of('d', DELETE, 3, 3),
+                    Diff.of('e', DELETE, 4, 4),
+                    Diff.of('e', ADD, 4, 4),
+                    Diff.of('a', ADD, 5, 5))),
             Arguments.of("acbdeacbed", "acebdabbabed", List.of(
-                    Diff.of('e', ADD, -1, 2),
-                    Diff.of('e', DELETE, 4, -1),
-                    Diff.of('c', DELETE, 6, -1),
-                    Diff.of('b', ADD, -1, 7),
-                    Diff.of('a', ADD, -1, 8),
-                    Diff.of('b', ADD, -1, 9))),
+                    Diff.of('e', ADD, 2, 2),
+                    Diff.of('e', DELETE, 4, 4),
+                    Diff.of('c', DELETE, 6, 6),
+                    Diff.of('b', ADD, 7, 7),
+                    Diff.of('a', ADD, 8, 8),
+                    Diff.of('b', ADD, 9, 9))),
             Arguments.of("acebdabbabed", "acbdeacbed", List.of(
-                    Diff.of('e', DELETE, 2, -1),
-                    Diff.of('e', ADD, -1, 4),
-                    Diff.of('c', ADD, -1, 6),
-                    Diff.of('b', DELETE, 7, -1),
-                    Diff.of('a', DELETE, 8, -1),
-                    Diff.of('b', DELETE, 9, -1))),
+                    Diff.of('e', DELETE, 2, 2),
+                    Diff.of('e', ADD, 4, 4),
+                    Diff.of('c', ADD, 6, 6),
+                    Diff.of('b', DELETE, 7, 7),
+                    Diff.of('a', DELETE, 8, 8),
+                    Diff.of('b', DELETE, 9, 9))),
             Arguments.of("abcbda", "bdcaba", List.of(
-                    Diff.of('a', DELETE, 0, -1),
-                    Diff.of('d', ADD, -1, 1),
-                    Diff.of('a', ADD, -1, 3),
-                    Diff.of('d', DELETE, 4, -1))),
-            Arguments.of("bokko", "bokkko", List.of(Diff.of('k', ADD, -1, 4))),
+                    Diff.of('a', DELETE, 0, 0),
+                    Diff.of('d', ADD, 1, 1),
+                    Diff.of('a', ADD, 3, 3),
+                    Diff.of('d', DELETE, 4, 4))),
+            Arguments.of("bokko", "bokkko", List.of(Diff.of('k', ADD, 4, 4))),
             Arguments.of("abcaaaaaabd", "abdaaaaaabc", List.of(
-                    Diff.of('c', DELETE, 2, -1),
-                    Diff.of('d', ADD, -1, 2),
-                    Diff.of('d', DELETE, 10, -1),
-                    Diff.of('c', ADD, -1, 10))),
+                    Diff.of('c', DELETE, 2, 2),
+                    Diff.of('d', ADD, 2, 2),
+                    Diff.of('d', DELETE, 10, 10),
+                    Diff.of('c', ADD, 10, 10))),
             Arguments.of("", "", List.of()),
-            Arguments.of("a", "", List.of(Diff.of('a', DELETE, 0, -1))),
-            Arguments.of("", "b", List.of(Diff.of('b', ADD, -1, 0))),
+            Arguments.of("a", "", List.of(Diff.of('a', DELETE, 0, 0))),
+            Arguments.of("", "b", List.of(Diff.of('b', ADD, 0, 0))),
             Arguments.of("Привет!", "Прювет!", List.of(
-                    Diff.of('и', DELETE, 2, -1),
-                    Diff.of('ю', ADD, -1, 2))),
-            Arguments.of("ab", "ba", List.of(Diff.of('a', DELETE, 0, -1), Diff.of('a', ADD, -1, 1)))
+                    Diff.of('и', DELETE, 2, 2),
+                    Diff.of('ю', ADD, 2, 2))),
+            Arguments.of("ab", "ba", List.of(Diff.of('a', DELETE, 0, 0), Diff.of('a', ADD, 1, 1)))
         );
     }
 
@@ -88,13 +88,13 @@ class MeyerAlgorithmTest
     {
         return Stream.of(
             Arguments.of(List.of(1, 2, 3, 4, 5, 6, 6, 6, 7, 8, 9), List.of(1, 2, 3, 4, 5, 0, 7, 8, 9), List.of(
-                    Diff.of(6, DELETE, 5, -1),
-                    Diff.of(6, DELETE, 6, -1),
-                    Diff.of(6, DELETE, 7, -1),
-                    Diff.of(0, ADD, -1, 5))),
+                    Diff.of(6, DELETE, 5, 5),
+                    Diff.of(6, DELETE, 6, 6),
+                    Diff.of(6, DELETE, 7, 7),
+                    Diff.of(0, ADD, 5, 5))),
             Arguments.of(List.of(1, 2, 3), List.of(1, 5, 3), List.of(
-                    Diff.of(2, DELETE, 1, -1),
-                    Diff.of(5, ADD, -1, 1))),
+                    Diff.of(2, DELETE, 1, 1),
+                    Diff.of(5, ADD, 1, 1))),
             Arguments.of(List.of(), List.of(), List.of())
         );
     }
