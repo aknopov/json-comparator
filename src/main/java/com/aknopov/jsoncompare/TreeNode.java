@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
- * TreeNode presentation
+ * TreeNode presentation. Allows traversing from child to parent in contrary to JsonNode.
  */
 @Getter(AccessLevel.PACKAGE)
 class TreeNode<T>

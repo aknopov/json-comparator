@@ -47,14 +47,10 @@ class DiffRecorder
     }
 
     /**
-     * Checks if message list is empty
-     * @return check result
+     * Returns the list of messages
+     *
+     * @return list of messages
      */
-    boolean hasErrors()
-    {
-        return !messages.isEmpty();
-    }
-
     List<String> getMessages()
     {
         return messages;

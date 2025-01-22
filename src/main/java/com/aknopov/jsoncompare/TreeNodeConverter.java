@@ -71,7 +71,7 @@ final class TreeNodeConverter
         {
             case BINARY, STRING -> new TreeNode<>(fieldName, NodeType.TEXT, parent, jsonNode.asText(), index);
             case NUMBER -> new TreeNode<>(fieldName, NodeType.NUMBER, parent, jsonNode.asDouble(), index);
-            case BOOLEAN -> new TreeNode<>(fieldName, NodeType.BOOLEAN, parent, jsonNode.asDouble(), index);
+            case BOOLEAN -> new TreeNode<>(fieldName, NodeType.BOOLEAN, parent, jsonNode.asBoolean(), index);
             default -> throw new IllegalArgumentException(
                     "Can't convert node of type '" + jsonNode.getNodeType() + "' to value");
         };

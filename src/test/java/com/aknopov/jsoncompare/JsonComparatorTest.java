@@ -42,11 +42,13 @@ private final static String JSON_SAMPLE_5 =
 [
   {
      "id": 1,
-     "name": "a"
+     "name": "a",
+     "passed": true
   },
   {
      "id": 2,
-     "name": "b"
+     "name": "b",
+     "passed": true
   }
 ]
 """;
@@ -54,11 +56,13 @@ private final static String JSON_SAMPLE_5 =
 [
   {
      "id": 1,
-     "name": "a"
+     "name": "a",
+     "passed": true
   },
   {
      "id": 2,
-     "name": "c"
+     "name": "c",
+     "passed": false
   }
 ]
 """;
@@ -93,7 +97,8 @@ private final static String JSON_SAMPLE_5 =
     void testArrayComparison()
     {
         List<String> diffs = JsonComparator.compareJsonStrings(JSON_ARRAY_1, JSON_ARRAY_2, false);
-        assertEquals(List.of("Nodes values differ: 'b' vs 'c', path='/[1]/name[1]'"), diffs);
+        assertEquals(List.of("Nodes values differ: 'b' vs 'c', path='/[1]/name[1]'",
+                "Nodes values differ: 'true' vs 'false', path='/[1]/passed[2]'"), diffs);
     }
 
     private static Stream<Arguments> comparisonSource()

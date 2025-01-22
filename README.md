@@ -10,7 +10,7 @@ List<String> JsonComparator.compareJsonStrings(sample1 string, sample2 string, s
 List<String> JsonComparator.compareJsonStrings(sample1 string, sample2 string, stopOnFirst bool, List<String> ignored)
 ```
 
-That return a list of detected differ**ences between two samples. Comparison can be stopped on the first occasion - `stopOnFirst=true`.
+That return a list of detected differences between two samples. Comparison can be stopped on the first occasion - `stopOnFirst=true`.
 The second form takes a list of RegEx strings to be used as a filter for ignored differences.
 
 Each entry in the returned list contains the JSON path to the node like  `..., path='/note/to[0]'`.
